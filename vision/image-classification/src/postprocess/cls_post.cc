@@ -97,7 +97,7 @@ void mobilint::post::CLSPostProcessor::plot_results(cv::Mat& im,
     if (n <= 0) return;
 
     const int font_face = cv::FONT_HERSHEY_SIMPLEX;
-    const double font_scale = 0.4;
+    const double font_scale = 0.7;
     const int thickness = 1;
     const int pad = 3;
     const int gap = 2;
