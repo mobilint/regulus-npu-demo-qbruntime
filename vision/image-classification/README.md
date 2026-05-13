@@ -1,14 +1,18 @@
 # Image Classification
 
-## Build
+## Build (HOST)
+
+Source the cross-toolchain on the host machine before building.
 
 ```bash
-cmake -S . -B build
-cmake --build build -j8
+source /opt/crosstools/mobilint/1.0.0/v3.4.0/environment-setup-cortexa53-mobilint-linux
+bash compile.sh
 ```
 
-## Run
+## Run (REGULUS)
+
+Copy `inference_yaml`, `resnet18_torchvision.mxq`, `imagenet.txt`, and a config yaml to the REGULUS device, then run:
 
 ```bash
-./build/inference_yaml ./resnet18_torchvision.mxq ./config.yaml ./image.jpg
+./inference_yaml ./resnet18_torchvision.mxq ./config.yaml ./image.jpg
 ```
