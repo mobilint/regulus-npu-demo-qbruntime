@@ -14,5 +14,5 @@ bash compile.sh
 Copy `inference` and `yolov8n-face.mxq` to the REGULUS device, then run:
 
 ```bash
-./inference ./yolov8n-face.mxq ./image.jpg
+./inference ./yolov8n-face.mxq ./test-img_face-det.png
 ```

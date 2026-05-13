@@ -14,5 +14,5 @@ bash compile.sh
 Copy `inference_yaml`, `resnet18_torchvision.mxq`, `imagenet.txt`, and a config yaml to the REGULUS device, then run:
 
 ```bash
-./inference_yaml ./resnet18_torchvision.mxq ./config.yaml ./image.jpg
+./inference_yaml ./resnet18_torchvision.mxq ./config.yaml ./test-image_cls.png
 ```
