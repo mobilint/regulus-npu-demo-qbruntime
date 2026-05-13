@@ -1,0 +1,65 @@
+#include <math.h>
+#include <omp.h>
+
+#include <algorithm>
+#include <array>
+#include <chrono>
+#include <condition_variable>
+#include <cstdint>
+#include <fstream>
+#include <iostream>
+#include <mutex>
+#include <opencv2/opencv.hpp>
+#include <queue>
+#include <string>
+#include <thread>
+#include <vector>
+
+#include "postprocess.h"
+
+namespace mobilint::post {
+
+class YOLOAnchorlessFacePostProcessor : public PostProcessor {
+public:
+    YOLOAnchorlessFacePostProcessor();
+    YOLOAnchorlessFacePostProcessor(int imh, int imw, const ModelInfo& cfg);
+    YOLOAnchorlessFacePostProcessor(int nc, int imh, int imw);
+    YOLOAnchorlessFacePostProcessor(int nc, int imh, int imw, float conf_thres,
+                                    float iou_thres, int nl = 3, int max_num_threads = 4);
+
+public:
+    void set_params(int nc, int imh, int imw, float conf_thres = 0.3,
+                    float iou_thres = 0.6, int nl = 3, int max_num_threads = 4) override;
+    void run_postprocess(const std::vector<std::vector<float>>& npu_outs);
+
+    std::vector<std::vector<int>> generate_grids(int imh, int imw,
+                                                 std::vector<int> strides);
+    std::vector<int> generate_strides(int nl);
+
+    void decode_boxes(const std::vector<float>& npu_out_box, const std::vector<int>& grid,
+                      int stride, int idx, std::array<float, 4>& pred_box);
+
+    void decode_extra(const std::vector<float>& npu_out_extra,
+                      const std::vector<int>& grid, int stride, int idx,
+                      std::vector<float>& pred_extra);
+    void decode_conf_thres(const std::vector<float>& npu_out_box,
+                           const std::vector<float>& npu_out_cls,
+                           const std::vector<float>& npu_out_extra,
+                           const std::vector<int>& grid, int stride,
+                           std::vector<std::array<float, 4>>& pred_boxes,
+                           std::vector<std::pair<float, int>>& pred_scores,
+                           std::vector<int>& pred_label,
+                           std::vector<std::vector<float>>& pred_extra);
+    void plot_extras(cv::Mat& im, const std::vector<std::vector<float>>& extras) override;
+    void worker() override;
+
+protected:
+    std::vector<int> m_strides;
+    std::vector<std::vector<int>> m_grids;
+
+    int m_reg_max = 16;
+
+    const std::vector<std::array<int, 3>> m_face_landmark_colors = {
+        {255, 60, 65}, {255, 60, 65}, {250, 155, 150}, {210, 210, 50}, {210, 210, 50}};
+};
+};  // namespace mobilint::post
