@@ -1,11 +1,32 @@
-# Regulus Face Detection Demo
+# face-detection-yolov8n
 
-## How to build
+YOLOv8n face detection demo on Mobilint REGULUS NPU.
 
-    make
+## Build (HOST)
 
-## How to run
+Source the cross-toolchain on the host machine before building.
 
-This program can infer video file or camera device (ex. /dev/video4, face-detection.mp4)
+```bash
+source /opt/crosstools/mobilint/1.0.0/v3.4.0/environment-setup-cortexa53-mobilint-linux
+make
+```
 
-    ./demo {path_to_src}
+## Run (REGULUS)
+
+Copy the `demo` binary and `mxq/` directory to the REGULUS device, then run:
+
+```bash
+./demo -d <video_device_number>
+```
+
+Example (USB camera at /dev/video4):
+
+```bash
+./demo -d 4
+```
+
+Check the available USB camera device:
+
+```bash
+./check.usbcamera.sh
+```

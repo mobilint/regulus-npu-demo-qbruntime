@@ -40,7 +40,7 @@ public:
     void worker() override;
 
 protected:
-    std::string m_label_file = "../imagenet.txt";
+    std::string m_label_file = "imagenet.txt";
     std::vector<std::string> m_labels;
     int m_topk = 5;
 };

@@ -1,14 +1,18 @@
 # Object Detection
 
-## Build
+## Build (HOST)
+
+Source the cross-toolchain on the host machine before building.
 
 ```bash
-cmake -S . -B build
-cmake --build build -j8
+source /opt/crosstools/mobilint/1.0.0/v3.4.0/environment-setup-cortexa53-mobilint-linux
+bash compile.sh
 ```
 
-## Run
+## Run (REGULUS)
+
+Copy `inference` and `yolov8n.mxq` to the REGULUS device, then run:
 
 ```bash
-./build/inference ./yolov8n.mxq ./image.jpg
+./inference ./yolov8n.mxq ./test-img_obj-det.png
 ```
