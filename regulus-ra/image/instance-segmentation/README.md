@@ -1,18 +1,33 @@
 # Instance Segmentation
 
-## Build (HOST)
+1 input image → NPU YOLOv8 instance segmentation → annotated result image (`*_result.jpg`).
 
-Source the cross-toolchain on the host machine before building.
+A prebuilt `inference` binary is already included in this repository, so you can
+run it on the board directly. Rebuild only if you changed the source.
+
+## Build (HOST, optional)
+
+Activate the cross-toolchain on the host, then build.
 
 ```bash
-source /opt/crosstools/mobilint/1.0.0/v3.4.0/environment-setup-cortexa53-mobilint-linux
-bash compile.sh
+# If LD_LIBRARY_PATH is set (e.g. inside the build container), unset it first.
+unset LD_LIBRARY_PATH
+
+# build.sh activates the cross-toolchain
+# (/opt/crosstools/mobilint/1.0.0/v3.4.0/environment-setup-cortexa53-mobilint-linux)
+# and runs cmake + make.
+bash build.sh
 ```
+
+This produces the `inference` binary.
 
 ## Run (REGULUS)
 
-Copy `inference` and `yolov8n-seg.mxq` to the REGULUS device, then run:
+Copy the `inference` binary together with `yolov8n-seg.mxq` and a test image to the board, then run
+it there.
 
 ```bash
 ./inference ./yolov8n-seg.mxq ./test-img_seg.png
 ```
+
+The annotated result is saved next to the input image as `*_result.jpg`.
