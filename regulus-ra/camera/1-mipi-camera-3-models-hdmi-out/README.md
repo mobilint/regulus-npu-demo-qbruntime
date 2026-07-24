@@ -3,7 +3,9 @@
 1 MIPI camera → NPU 3 models (face detection / pose estimation / object
 detection) → HDMI display (1920×1080).
 
-## Build (HOST)
+A prebuilt `demo` binary is already included in this repository, so you can run it on the board directly. Rebuild only if you changed the source.
+
+## Build (HOST, optional)
 
 Activate the cross-toolchain on the host, then build.
 
