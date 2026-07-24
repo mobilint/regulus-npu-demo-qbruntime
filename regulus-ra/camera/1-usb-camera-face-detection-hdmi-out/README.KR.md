@@ -1,4 +1,4 @@
-# face-detection-yolov8n
+# 1-usb-camera-face-detection-hdmi-out
 
 Mobilint REGULUS NPU에서 동작하는 YOLOv8n 얼굴 검출 데모입니다.
 

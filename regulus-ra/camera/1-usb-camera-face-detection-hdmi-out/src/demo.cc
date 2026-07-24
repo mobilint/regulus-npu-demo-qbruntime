@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <atomic>
 #include <cctype>
+#include <chrono>
 #include <cmath>
 #include <csignal>
 #include <functional>
@@ -200,7 +201,9 @@ void work_post(PostQueue* post_queue, DisplayQueue* display_queue) {
     display_queue->close();
 }
 
-void printUsage() { cout << "Usage: demo [config.yaml]\n"; }
+void printUsage() {
+    cout << "Usage: demo [-d <video_device_number>] [config.yaml]\n";
+}
 
 }  // namespace
 
@@ -211,12 +214,24 @@ int main(int argc, char* argv[]) {
 
     YamlConfig cfg;
     std::string config_path = "./config.yaml";
-    if (argc > 1) config_path = argv[1];
+    std::string device_override = "";
+    for (int i = 1; i < argc; i++) {
+        std::string arg = argv[i];
+        if (arg == "-d" && i + 1 < argc) {
+            device_override = argv[++i];
+        } else {
+            config_path = arg;
+        }
+    }
     if (!loadYamlConfig(config_path, cfg)) {
         std::cerr << "[WARN] Failed to load config file: " << config_path
                   << ", using defaults.\n";
     }
 
+    // A device number given with -d takes precedence over the config file.
+    if (!device_override.empty()) {
+        cfg.camera_device = device_override;
+    }
     if (cfg.camera_device == "") {
         cfg.camera_device = findVideoDevice();
     }
@@ -254,6 +269,9 @@ int main(int argc, char* argv[]) {
     cv::Mat display =
         cv::Mat::zeros(cv::Size(cfg.display_width, cfg.display_height), CV_8UC3);
 
+    int fps_frames = 0;
+    auto fps_last = std::chrono::steady_clock::now();
+
     while (push_on) {
         cv::Mat frame;
         auto qsc = display_queue.pop(frame);
@@ -271,6 +289,17 @@ int main(int argc, char* argv[]) {
 
         gst_wrapper::push_data_to_appsrc(gst_pipeline_display.appsrc, display.data,
                                          cfg.display_width * cfg.display_height * 3);
+
+        // Print the display frame rate once per second.
+        fps_frames++;
+        auto now = std::chrono::steady_clock::now();
+        double elapsed = std::chrono::duration<double>(now - fps_last).count();
+        if (elapsed >= 1.0) {
+            std::cout << "Total frame rate: " << (fps_frames / elapsed) << " FPS"
+                      << std::endl;
+            fps_frames = 0;
+            fps_last = now;
+        }
     }
 
     pre_queue.close();

@@ -1,17 +1,37 @@
 # 1-mipi-camera-3-models-hdmi-out
 
-MIPI 카메라 1대 -> NPU 모델 3개 -> HDMI 디스플레이 (1920 * 1080)
+MIPI 카메라 1대 → NPU 모델 3개(얼굴 검출 / 자세 추정 / 객체 검출) → HDMI
+디스플레이(1920×1080).
 
-1. 데모 빌드
-   ```
-   make -j$(nproc)
-   ```
-2. USB 카메라 장치 이름 확인
-   ```
+## 빌드 (HOST)
+
+호스트에서 크로스 툴체인을 활성화한 뒤 빌드합니다.
+
+```bash
+# LD_LIBRARY_PATH 가 설정돼 있으면(예: 빌드 컨테이너 내부) 먼저 해제합니다.
+unset LD_LIBRARY_PATH
+
+# 크로스 툴체인 활성화.
+source /opt/crosstools/mobilint/1.0.0/v3.4.0/environment-setup-cortexa53-mobilint-linux
+
+# 빌드.
+make -j$(nproc)
+```
+
+`demo` 바이너리가 생성됩니다.
+
+## 실행 (REGULUS)
+
+`demo` 바이너리를 `mxq/`, `img/` 디렉토리와 함께 보드로 복사한 뒤 보드에서
+실행합니다.
+
+1. MIPI 카메라 장치 번호 확인:
+   ```bash
    ./check.video.sh
    ```
-3. 데모 실행
+2. 확인한 장치 번호로 실행 (예: 0):
+   ```bash
+   ./demo -d 0
    ```
-   2번에서 확인한 MIPI 카메라 장치 번호를 사용하세요.
-   ./demo -d 4
-   ```
+
+결과는 HDMI 디스플레이(1920×1080)로 출력됩니다.

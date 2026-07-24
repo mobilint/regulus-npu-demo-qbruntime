@@ -1,4 +1,4 @@
-# face-detection-yolov8n
+# 1-usb-camera-face-detection-hdmi-out
 
 YOLOv8n face detection demo on Mobilint REGULUS NPU.
 
