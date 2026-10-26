@@ -71,8 +71,6 @@ HeadPlanes identify_heads(const std::vector<std::vector<int64_t>>& shapes) {
 }
 }  // namespace demo
 
-// Unit tests compile the pure helpers above without board SDKs.
-#ifndef OBJECT_DETECTION_UNIT_TEST
 #include <qbruntime/qbruntime.h>
 #include <sp500/dsp.h>
 #include <sp500/letterbox.h>
@@ -310,4 +308,3 @@ int main(int argc, char** argv) {
     return 1;
   }
 }
-#endif  // OBJECT_DETECTION_UNIT_TEST

@@ -131,7 +131,6 @@ MaskSpan validate_mask_span(const std::array<float, 4>& bounds, uint32_t offset,
 }
 }  // namespace demo
 
-#ifndef INSTANCE_SEGMENTATION_UNIT_TEST
 #include <qbruntime/qbruntime.h>
 #include <sp500/dsp.h>
 #include <sp500/letterbox.h>
@@ -416,4 +415,3 @@ int main(int argc, char** argv) {
     return 1;
   }
 }
-#endif  // INSTANCE_SEGMENTATION_UNIT_TEST

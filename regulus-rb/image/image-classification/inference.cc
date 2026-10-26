@@ -33,7 +33,6 @@ std::array<Prediction, 5> top_five(const float* logits, size_t count) {
 }
 }  // namespace demo
 
-#ifndef IMAGE_CLASSIFICATION_UNIT_TEST
 #include <qbruntime/qbruntime.h>
 
 #include <chrono>
@@ -161,4 +160,3 @@ int main(int argc, char** argv) {
     return 1;
   }
 }
-#endif  // IMAGE_CLASSIFICATION_UNIT_TEST

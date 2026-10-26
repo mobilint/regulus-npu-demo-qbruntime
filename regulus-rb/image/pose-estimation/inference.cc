@@ -90,7 +90,6 @@ HeadPlanes identify_heads(const std::vector<std::vector<int64_t>>& shapes) {
 }
 }  // namespace demo
 
-#ifndef POSE_ESTIMATION_UNIT_TEST
 #include <qbruntime/qbruntime.h>
 #include <sp500/dsp.h>
 #include <sp500/letterbox.h>
@@ -361,4 +360,3 @@ int main(int argc, char** argv) {
     return 1;
   }
 }
-#endif
