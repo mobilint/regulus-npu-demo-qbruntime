@@ -11,29 +11,28 @@
 namespace app {
 namespace transfer {
 struct Module_config {
-    std::atomic<bool>& push_on;
-    Benchmarker* bc = nullptr;
+  std::atomic<bool>& push_on;
+  Benchmarker* bc = nullptr;
 };
 
 struct Module_config_resize {
-    int npu_w;
-    int npu_h;
-    std::atomic<bool>& push_on;
-    Benchmarker* bc = nullptr;
+  int npu_w;
+  int npu_h;
+  std::atomic<bool>& push_on;
+  Benchmarker* bc = nullptr;
 };
 
 struct Module_in {
-    Buffer& buffer;
+  Buffer& buffer;
 };
 
 struct Module_out {
-    Queue& queue;
+  Queue& queue;
 };
 }  // namespace transfer
-std::thread module_transfer(transfer::Module_config&& conf, transfer::Module_in&& in,
-                            transfer::Module_out&& out);
-std::thread module_transfer_resize(transfer::Module_config_resize&& conf,
-                                   transfer::Module_in&& in, transfer::Module_out&& out);
+std::thread module_transfer(transfer::Module_config&& conf, transfer::Module_in&& in, transfer::Module_out&& out);
+std::thread module_transfer_resize(transfer::Module_config_resize&& conf, transfer::Module_in&& in,
+                                   transfer::Module_out&& out);
 }  // namespace app
 
 #endif

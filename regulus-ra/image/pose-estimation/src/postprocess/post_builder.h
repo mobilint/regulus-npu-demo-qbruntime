@@ -59,99 +59,98 @@
 using namespace mobilint::post;
 
 inline bool has_anchors(const PostProcessInfo& p) {
-    if (p.anchors.empty()) return false;
-    for (const auto& layer : p.anchors) {
-        if (!layer.empty()) return true;
-    }
-    return false;
+  if (p.anchors.empty()) return false;
+  for (const auto& layer : p.anchors) {
+    if (!layer.empty()) return true;
+  }
+  return false;
 }
 
-inline std::unique_ptr<PostProcessor> make_postprocessor(int imh, int imw,
-                                                         const ModelInfo& cfg) {
-    const auto& post_info = cfg.m_postprocess;
-    const bool anchors = has_anchors(post_info);
+inline std::unique_ptr<PostProcessor> make_postprocessor(int imh, int imw, const ModelInfo& cfg) {
+  const auto& post_info = cfg.m_postprocess;
+  const bool anchors = has_anchors(post_info);
 
-    auto to_lower = [](std::string s) {
-        for (auto& ch : s) ch = (char)std::tolower((unsigned char)ch);
-        return s;
-    };
-    const auto post_type = to_lower(post_info.type);
+  auto to_lower = [](std::string s) {
+    for (auto& ch : s) ch = (char)std::tolower((unsigned char)ch);
+    return s;
+  };
+  const auto post_type = to_lower(post_info.type);
 
-    if (post_type == "ssd") {
+  if (post_type == "ssd") {
 #if HAS_SSD_POST
-        return std::make_unique<SSDPostProcessor>(imh, imw, cfg);
+    return std::make_unique<SSDPostProcessor>(imh, imw, cfg);
 #else
-        std::cerr << "[ERROR] SSD not supported (header missing)\n";
-        return nullptr;
+    std::cerr << "[ERROR] SSD not supported (header missing)\n";
+    return nullptr;
 #endif
 
-    } else if (post_type == "yolo") {
-        switch (post_info.task) {
-        case Task::DET:
-            if (anchors) {
+  } else if (post_type == "yolo") {
+    switch (post_info.task) {
+      case Task::DET:
+        if (anchors) {
 #if HAS_YOLO_ANCHOR_POST
-                return std::make_unique<YOLOAnchorPostProcessor>(imh, imw, cfg);
+          return std::make_unique<YOLOAnchorPostProcessor>(imh, imw, cfg);
 #else
-                std::cerr << "[ERROR] DET + anchors not supported (header missing)\n";
-                return nullptr;
+          std::cerr << "[ERROR] DET + anchors not supported (header missing)\n";
+          return nullptr;
 #endif
-            } else {
+        } else {
 #if HAS_YOLO_ANCHORLESS_POST
-                return std::make_unique<YOLOAnchorlessPostProcessor>(imh, imw, cfg);
+          return std::make_unique<YOLOAnchorlessPostProcessor>(imh, imw, cfg);
 #else
-                std::cerr << "[ERROR] DET (anchorless) not supported (header missing)\n";
-                return nullptr;
+          std::cerr << "[ERROR] DET (anchorless) not supported (header missing)\n";
+          return nullptr;
 #endif
-            }
-
-        case Task::SEG:
-            if (anchors) {
-#if HAS_YOLO_ANCHOR_SEG_POST
-                return std::make_unique<YOLOAnchorSegPostProcessor>(imh, imw, cfg);
-#else
-                std::cerr << "[ERROR] SEG + anchors not supported (header missing)\n";
-                return nullptr;
-#endif
-            } else {
-#if HAS_YOLO_ANCHORLESS_SEG_POST
-                return std::make_unique<YOLOAnchorlessSegPostProcessor>(imh, imw, cfg);
-#else
-                std::cerr << "[ERROR] SEG (anchorless) not supported (header missing)\n";
-                return nullptr;
-#endif
-            }
-
-        case Task::FACE:
-            if (anchors) {
-                std::cerr << "[ERROR] FACE + anchors not implemented\n";
-                return nullptr;
-            } else {
-#if HAS_YOLO_ANCHORLESS_FACE_POST
-                return std::make_unique<YOLOAnchorlessFacePostProcessor>(imh, imw, cfg);
-#else
-                std::cerr << "[ERROR] FACE (anchorless) not supported (header missing)\n";
-                return nullptr;
-#endif
-            }
-        case Task::POSE:
-            if (anchors) {
-                std::cerr << "[ERROR] POSE + anchors not implemented\n";
-                return nullptr;
-            } else {
-#if HAS_YOLO_ANCHORLESS_POSE_POST
-                return std::make_unique<YOLOAnchorlessPosePostProcessor>(imh, imw, cfg);
-#else
-                std::cerr << "[ERROR] POSE (anchorless) not supported (header missing)\n";
-                return nullptr;
-#endif
-            }
-
-        default:
-            std::cerr << "[ERROR] Task not supported\n";
-            return nullptr;
         }
-    } else {
-        std::cerr << "[ERROR] Unknown post type\n";
+
+      case Task::SEG:
+        if (anchors) {
+#if HAS_YOLO_ANCHOR_SEG_POST
+          return std::make_unique<YOLOAnchorSegPostProcessor>(imh, imw, cfg);
+#else
+          std::cerr << "[ERROR] SEG + anchors not supported (header missing)\n";
+          return nullptr;
+#endif
+        } else {
+#if HAS_YOLO_ANCHORLESS_SEG_POST
+          return std::make_unique<YOLOAnchorlessSegPostProcessor>(imh, imw, cfg);
+#else
+          std::cerr << "[ERROR] SEG (anchorless) not supported (header missing)\n";
+          return nullptr;
+#endif
+        }
+
+      case Task::FACE:
+        if (anchors) {
+          std::cerr << "[ERROR] FACE + anchors not implemented\n";
+          return nullptr;
+        } else {
+#if HAS_YOLO_ANCHORLESS_FACE_POST
+          return std::make_unique<YOLOAnchorlessFacePostProcessor>(imh, imw, cfg);
+#else
+          std::cerr << "[ERROR] FACE (anchorless) not supported (header missing)\n";
+          return nullptr;
+#endif
+        }
+      case Task::POSE:
+        if (anchors) {
+          std::cerr << "[ERROR] POSE + anchors not implemented\n";
+          return nullptr;
+        } else {
+#if HAS_YOLO_ANCHORLESS_POSE_POST
+          return std::make_unique<YOLOAnchorlessPosePostProcessor>(imh, imw, cfg);
+#else
+          std::cerr << "[ERROR] POSE (anchorless) not supported (header missing)\n";
+          return nullptr;
+#endif
+        }
+
+      default:
+        std::cerr << "[ERROR] Task not supported\n";
         return nullptr;
     }
+  } else {
+    std::cerr << "[ERROR] Unknown post type\n";
+    return nullptr;
+  }
 }
