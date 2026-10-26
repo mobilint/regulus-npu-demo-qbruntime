@@ -15,8 +15,7 @@ extern const std::vector<std::string> FACE_LABELS;  // {"face"}
 // Draw detection boxes + "name score%" onto im (boxes are in im coordinates).
 // rgb_order: true for an RGB buffer (HDMI path), false for BGR/BGRX (framebuffer path). The
 // palette is stored BGR, so this only decides whether the channels are swapped on the way out.
-void draw_det(cv::Mat& im, const Detections& d, const std::vector<std::string>& names,
-              bool rgb_order = true);
+void draw_det(cv::Mat& im, const Detections& d, const std::vector<std::string>& names, bool rgb_order = true);
 
 }  // namespace app
 

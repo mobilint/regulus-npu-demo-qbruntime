@@ -10,7 +10,7 @@ namespace app {
 
 // How old a frame is now, in ms, counted from the moment appsink handed it over.
 inline double age_ms(const SteadyTime& t) {
-    return std::chrono::duration<double, std::milli>{std::chrono::steady_clock::now() - t}.count();
+  return std::chrono::duration<double, std::milli>{std::chrono::steady_clock::now() - t}.count();
 }
 
 // One frame's journey, as its age at every handoff along the way. `X_in` is when a stage took the
@@ -30,26 +30,26 @@ inline double age_ms(const SteadyTime& t) {
 // copy for the NPU and that copy goes there. What lands on the frame's own timeline instead is
 // plot blocked waiting for that copy's detections -- the gap from plot_in to dets_in.
 struct LatencyTimeline {
-    RecentValues<double, 1000> capture_out;     // capture is finished; about to hand it on
-    RecentValues<double, 1000> capture_pushed;  // its push into capture_q returned
-    RecentValues<double, 1000> pre_in;          // pre took it out of capture_q
-    RecentValues<double, 1000> pre_out;         // pre is finished; about to hand it on
-    RecentValues<double, 1000> pre_pushed;      // its push into frame_q returned
-    RecentValues<double, 1000> plot_in;      // plot took the frame out of frame_q
-    RecentValues<double, 1000> dets_in;      // plot also has all three detections
-    RecentValues<double, 1000> plot_out;     // plot finished writing the display buffer
-    RecentValues<double, 1000> display_in;   // display took it out of display_q (HDMI only)
+  RecentValues<double, 1000> capture_out;     // capture is finished; about to hand it on
+  RecentValues<double, 1000> capture_pushed;  // its push into capture_q returned
+  RecentValues<double, 1000> pre_in;          // pre took it out of capture_q
+  RecentValues<double, 1000> pre_out;         // pre is finished; about to hand it on
+  RecentValues<double, 1000> pre_pushed;      // its push into frame_q returned
+  RecentValues<double, 1000> plot_in;         // plot took the frame out of frame_q
+  RecentValues<double, 1000> dets_in;         // plot also has all three detections
+  RecentValues<double, 1000> plot_out;        // plot finished writing the display buffer
+  RecentValues<double, 1000> display_in;      // display took it out of display_q (HDMI only)
 
-    // The detection branch, for ONE traced model (od -- the slowest, so it is the one plot ends up
-    // waiting for). These do NOT belong to the sum above: the frame itself never goes here, pre
-    // sends a copy (see the note at the top). They are printed nested under `post_q x3` because
-    // they explain why that wait is as long as it is, in the source frame's own clock.
-    RecentValues<double, 1000> det_infer_in;      // the infer thread saw a new pinned input
-    RecentValues<double, 1000> det_infer_out;     // the NPU finished this model
-    RecentValues<double, 1000> det_infer_pushed;  // its push into raw_q returned
-    RecentValues<double, 1000> det_decode_in;     // decode took it out of raw_q
-    RecentValues<double, 1000> det_decode_out;    // the DSP finished decode + NMS
-    RecentValues<double, 1000> det_decode_pushed; // its push into post_q returned
+  // The detection branch, for ONE traced model (od -- the slowest, so it is the one plot ends up
+  // waiting for). These do NOT belong to the sum above: the frame itself never goes here, pre
+  // sends a copy (see the note at the top). They are printed nested under `post_q x3` because
+  // they explain why that wait is as long as it is, in the source frame's own clock.
+  RecentValues<double, 1000> det_infer_in;       // the infer thread saw a new pinned input
+  RecentValues<double, 1000> det_infer_out;      // the NPU finished this model
+  RecentValues<double, 1000> det_infer_pushed;   // its push into raw_q returned
+  RecentValues<double, 1000> det_decode_in;      // decode took it out of raw_q
+  RecentValues<double, 1000> det_decode_out;     // the DSP finished decode + NMS
+  RecentValues<double, 1000> det_decode_pushed;  // its push into post_q returned
 };
 
 }  // namespace app

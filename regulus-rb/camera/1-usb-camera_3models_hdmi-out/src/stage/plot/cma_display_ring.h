@@ -16,25 +16,25 @@ namespace app {
 // bytes, and 16 is not a multiple of 3, so at 3 bytes a paste can land between pixels and rotate
 // R/G/B. At 4 bytes 16/4 = 4, so any x that is a multiple of 4 lands exactly.
 class CmaDisplayRing {
-   public:
-    CmaDisplayRing(int w, int h, int count = 4);
-    ~CmaDisplayRing();
+ public:
+  CmaDisplayRing(int w, int h, int count = 4);
+  ~CmaDisplayRing();
 
-    bool ok() const { return ok_; }
-    int count() const { return count_; }
-    cv::Mat& mat(int i) { return mats_[i]; }  // wraps buffer i for compositing
-    int fd(int i) const { return fds_[i]; }   // dmabuf fd of buffer i (for scanout)
+  bool ok() const { return ok_; }
+  int count() const { return count_; }
+  cv::Mat& mat(int i) { return mats_[i]; }  // wraps buffer i for compositing
+  int fd(int i) const { return fds_[i]; }   // dmabuf fd of buffer i (for scanout)
 
-    void begin_cpu(int i);  // before CPU writes (dma-buf sync start, RW)
-    void end_cpu(int i);    // after CPU writes (dma-buf sync end, RW -> flush for HW read)
+  void begin_cpu(int i);  // before CPU writes (dma-buf sync start, RW)
+  void end_cpu(int i);    // after CPU writes (dma-buf sync end, RW -> flush for HW read)
 
-   private:
-    int w_ = 0, h_ = 0, count_ = 0;
-    size_t bytes_ = 0;
-    bool ok_ = false;
-    std::vector<int> fds_;
-    std::vector<void*> maps_;
-    std::vector<cv::Mat> mats_;
+ private:
+  int w_ = 0, h_ = 0, count_ = 0;
+  size_t bytes_ = 0;
+  bool ok_ = false;
+  std::vector<int> fds_;
+  std::vector<void*> maps_;
+  std::vector<cv::Mat> mats_;
 };
 
 }  // namespace app

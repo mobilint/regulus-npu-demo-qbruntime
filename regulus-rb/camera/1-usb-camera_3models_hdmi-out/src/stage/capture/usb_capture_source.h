@@ -13,17 +13,17 @@ namespace app {
 // the MAPI (cover-scaled) output size the pre stage then center-crops. sink_format is "RGB" or
 // "RGBx" -- see gst_capture_pipeline.h.
 class UsbCaptureSource : public CaptureSource {
-   public:
-    UsbCaptureSource(const char* dev_path, uint32_t cam_w, uint32_t cam_h, uint32_t cam_fps,
-                     uint32_t sink_w, uint32_t sink_h, const char* sink_format = "RGB")
-        : pipe_(dev_path, cam_w, cam_h, cam_fps, sink_w, sink_h, sink_format) {}
+ public:
+  UsbCaptureSource(const char* dev_path, uint32_t cam_w, uint32_t cam_h, uint32_t cam_fps, uint32_t sink_w,
+                   uint32_t sink_h, const char* sink_format = "RGB")
+      : pipe_(dev_path, cam_w, cam_h, cam_fps, sink_w, sink_h, sink_format) {}
 
-    void start() override { pipe_.start(); }
-    void stop() override { pipe_.stop(); }
-    GstElement* appsink() override { return pipe_.appsink; }
+  void start() override { pipe_.start(); }
+  void stop() override { pipe_.stop(); }
+  GstElement* appsink() override { return pipe_.appsink; }
 
-   private:
-    gst_wrapper::V4l2srcCapturePipeline pipe_;
+ private:
+  gst_wrapper::V4l2srcCapturePipeline pipe_;
 };
 
 }  // namespace app

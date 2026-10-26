@@ -8,48 +8,41 @@
 
 namespace gst_wrapper {
 class MipiSrcAppsinkPipeline : public BasePipeline {
-public:
-    MipiSrcAppsinkPipeline() = delete;
-    MipiSrcAppsinkPipeline(const char* mipi_dev_path, const char* camera_format,
-                           uint32_t camera_width, uint32_t camera_height,
-                           uint32_t camera_fps, const char* sink_format,
-                           uint32_t sink_width, uint32_t sink_height, uint32_t sink_fps);
+ public:
+  MipiSrcAppsinkPipeline() = delete;
+  MipiSrcAppsinkPipeline(const char* mipi_dev_path, const char* camera_format, uint32_t camera_width,
+                         uint32_t camera_height, uint32_t camera_fps, const char* sink_format, uint32_t sink_width,
+                         uint32_t sink_height, uint32_t sink_fps);
 
-    GstElement* v4l2src;
-    GstElement* videorate;
-    GstElement* appsink;
+  GstElement* v4l2src;
+  GstElement* videorate;
+  GstElement* appsink;
 
-private:
-    GstElement* v4l2convert;
+ private:
+  GstElement* v4l2convert;
 
-    void create_elements(const char* mipi_dev_path);
-    void link_elements(const char* camera_format, uint32_t camera_width,
-                       uint32_t camera_height, uint32_t camera_fps,
-                       const char* sink_format, uint32_t sink_width, uint32_t sink_height,
-                       uint32_t sink_fps);
+  void create_elements(const char* mipi_dev_path);
+  void link_elements(const char* camera_format, uint32_t camera_width, uint32_t camera_height, uint32_t camera_fps,
+                     const char* sink_format, uint32_t sink_width, uint32_t sink_height, uint32_t sink_fps);
 };
 
 class MipiSrcVideoRateAppsinkPipeline : public BasePipeline {
-public:
-    MipiSrcVideoRateAppsinkPipeline() = delete;
-    MipiSrcVideoRateAppsinkPipeline(const char* mipi_dev_path, const char* camera_format,
-                                    uint32_t camera_width, uint32_t camera_height,
-                                    uint32_t camera_fps, const char* sink_format,
-                                    uint32_t sink_width, uint32_t sink_height,
-                                    uint32_t sink_fps);
+ public:
+  MipiSrcVideoRateAppsinkPipeline() = delete;
+  MipiSrcVideoRateAppsinkPipeline(const char* mipi_dev_path, const char* camera_format, uint32_t camera_width,
+                                  uint32_t camera_height, uint32_t camera_fps, const char* sink_format,
+                                  uint32_t sink_width, uint32_t sink_height, uint32_t sink_fps);
 
-    GstElement* v4l2src;
-    GstElement* videorate;
-    GstElement* appsink;
+  GstElement* v4l2src;
+  GstElement* videorate;
+  GstElement* appsink;
 
-private:
-    GstElement* videoconvertscale;
+ private:
+  GstElement* videoconvertscale;
 
-    void create_elements(const char* mipi_dev_path);
-    void link_elements(const char* camera_format, uint32_t camera_width,
-                       uint32_t camera_height, uint32_t camera_fps,
-                       const char* sink_format, uint32_t sink_width, uint32_t sink_height,
-                       uint32_t sink_fps);
+  void create_elements(const char* mipi_dev_path);
+  void link_elements(const char* camera_format, uint32_t camera_width, uint32_t camera_height, uint32_t camera_fps,
+                     const char* sink_format, uint32_t sink_width, uint32_t sink_height, uint32_t sink_fps);
 };
 }  // namespace gst_wrapper
 

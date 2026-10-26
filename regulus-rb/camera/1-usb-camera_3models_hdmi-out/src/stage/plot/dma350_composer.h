@@ -28,36 +28,36 @@ namespace app {
 // S_SELECTION reports left/top rounded down to a multiple of 2; the 16-byte rounding is not
 // reported, so compose() cannot detect it.
 class Dma350Composer {
-   public:
-    // src_w/src_h describe the WHOLE source buffer, dst_w/dst_h the whole destination. bpp is
-    // bytes per pixel and applies to both: 3 for RGB24, 4 for RGBX (R,G,B,unused).
-    Dma350Composer(int src_w, int src_h, int dst_w, int dst_h, int bpp = 3);
-    ~Dma350Composer();
+ public:
+  // src_w/src_h describe the WHOLE source buffer, dst_w/dst_h the whole destination. bpp is
+  // bytes per pixel and applies to both: 3 for RGB24, 4 for RGBX (R,G,B,unused).
+  Dma350Composer(int src_w, int src_h, int dst_w, int dst_h, int bpp = 3);
+  ~Dma350Composer();
 
-    Dma350Composer(const Dma350Composer&) = delete;
-    Dma350Composer& operator=(const Dma350Composer&) = delete;
+  Dma350Composer(const Dma350Composer&) = delete;
+  Dma350Composer& operator=(const Dma350Composer&) = delete;
 
-    bool ok() const { return ok_; }
+  bool ok() const { return ok_; }
 
-    // Take only this rectangle of the source. Needed when the frame is narrower than the buffer
-    // it sits in: the DMA350 ignores a bytesperline wider than the width, so such a window has to
-    // be a crop rather than a stride. Both demos hand over a packed frame and do not need it.
-    // Call once before the first compose; without it the whole source is used.
-    bool set_source_crop(int x, int y, int w, int h);
+  // Take only this rectangle of the source. Needed when the frame is narrower than the buffer
+  // it sits in: the DMA350 ignores a bytesperline wider than the width, so such a window has to
+  // be a crop rather than a stride. Both demos hand over a packed frame and do not need it.
+  // Call once before the first compose; without it the whole source is used.
+  bool set_source_crop(int x, int y, int w, int h);
 
-    // Write the source window into dst_fd at (x, y). Blocks until the DMA350 reports the job done.
-    // False on any failure (the caller drops the frame).
-    bool compose(int src_fd, size_t src_offset, int dst_fd, int x, int y);
+  // Write the source window into dst_fd at (x, y). Blocks until the DMA350 reports the job done.
+  // False on any failure (the caller drops the frame).
+  bool compose(int src_fd, size_t src_offset, int dst_fd, int x, int y);
 
-   private:
-    int fd_ = -1;
-    int src_w_ = 0, src_h_ = 0, dst_w_ = 0, dst_h_ = 0;
-    int win_w_ = 0, win_h_ = 0;  // the source window: the whole source unless cropped
-    int bpp_ = 3;
-    size_t src_bytes_ = 0, dst_bytes_ = 0;
-    bool ok_ = false;
-    bool streaming_ = false;
-    bool warned_align_ = false;
+ private:
+  int fd_ = -1;
+  int src_w_ = 0, src_h_ = 0, dst_w_ = 0, dst_h_ = 0;
+  int win_w_ = 0, win_h_ = 0;  // the source window: the whole source unless cropped
+  int bpp_ = 3;
+  size_t src_bytes_ = 0, dst_bytes_ = 0;
+  bool ok_ = false;
+  bool streaming_ = false;
+  bool warned_align_ = false;
 };
 
 }  // namespace app

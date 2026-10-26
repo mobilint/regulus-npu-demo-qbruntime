@@ -6,7 +6,6 @@ import tempfile
 import unittest
 from pathlib import Path
 
-
 PACKAGE_DIR = Path(__file__).resolve().parents[1]
 RUN_SH = PACKAGE_DIR / "run.sh"
 FIXED_MODELS = {
@@ -75,8 +74,7 @@ class LauncherFixture:
         self.loader = self.mock_bin / "dsp_firmware_load"
         write_executable(
             self.loader,
-            'echo "loader argc=$# args=$*" >> "$TEST_EVENTS"\n'
-            'exit "${TEST_LOADER_STATUS:-0}"\n',
+            'echo "loader argc=$# args=$*" >> "$TEST_EVENTS"\nexit "${TEST_LOADER_STATUS:-0}"\n',
         )
 
     def cleanup(self):
@@ -160,11 +158,7 @@ class LauncherValidationTests(unittest.TestCase):
         self.assert_preflight_failure(result, "dsp_firmware_load")
 
     def test_missing_background_fails_before_side_effects(self):
-        background = (
-            self.fixture.package
-            / "img"
-            / "[Regulus] Smart Camera_Demo_260804.jpg"
-        )
+        background = self.fixture.package / "img" / "[Regulus] Smart Camera_Demo_260804.jpg"
         background.unlink()
 
         result = self.fixture.run()
@@ -206,14 +200,10 @@ class StaticPackageContractTests(unittest.TestCase):
         paths.extend(PACKAGE_DIR.glob("*.cc"))
         paths.extend((PACKAGE_DIR / "src").rglob("*.cc"))
         paths.extend((PACKAGE_DIR / "src").rglob("*.h"))
-        return "\n".join(
-            path.read_text(encoding="utf-8") for path in paths if path.is_file()
-        )
+        return "\n".join(path.read_text(encoding="utf-8") for path in paths if path.is_file())
 
     def test_mxq_directory_has_exactly_three_fixed_models(self):
-        actual_models = {
-            path.name for path in (PACKAGE_DIR / "mxq").glob("*.mxq") if path.is_file()
-        }
+        actual_models = {path.name for path in (PACKAGE_DIR / "mxq").glob("*.mxq") if path.is_file()}
         self.assertEqual(actual_models, FIXED_MODELS)
 
         referenced_models = set(re.findall(r"[A-Za-z0-9_.-]+\.mxq", self.production_text()))
@@ -239,9 +229,7 @@ class StaticPackageContractTests(unittest.TestCase):
 
     def test_production_files_have_no_third_party_paths_or_model_overrides(self):
         text = self.production_text()
-        self.assertNotIn(
-            "third_party", text, "production files must not use bundled dependencies"
-        )
+        self.assertNotIn("third_party", text, "production files must not use bundled dependencies")
         for variable in ("MXQ_FACE", "MXQ_POSE", "MXQ_OD"):
             self.assertNotIn(variable, text, f"unsupported model override: {variable}")
 

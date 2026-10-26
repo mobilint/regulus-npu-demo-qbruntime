@@ -13,8 +13,8 @@ namespace app {
 // 16 covers both 3- and 4-byte pixels.
 // A landscape camera feeding a portrait model always yields crop_x != 0.
 struct CoverCrop {
-    int scaled_w, scaled_h;
-    int crop_x, crop_y;
+  int scaled_w, scaled_h;
+  int crop_x, crop_y;
 };
 
 CoverCrop cover_crop(int src_w, int src_h, int dst_w, int dst_h);

@@ -14,14 +14,14 @@
 namespace app {
 
 struct InferConfig {
-    QbMultiModel* mm;  // shared model set + shared pinned input
-    int model_idx;     // which model this stage runs (0=face,1=pose,2=od)
-    RunState* run;
-    const char* branch;
-    std::atomic<uint64_t>* activity;
-    Benchmarker* bc = nullptr;
-    // Set on the traced model only (od); the others leave it null so they do not overwrite it.
-    LatencyTimeline* tl = nullptr;
+  QbMultiModel* mm;  // shared model set + shared pinned input
+  int model_idx;     // which model this stage runs (0=face,1=pose,2=od)
+  RunState* run;
+  const char* branch;
+  std::atomic<uint64_t>* activity;
+  Benchmarker* bc = nullptr;
+  // Set on the traced model only (od); the others leave it null so they do not overwrite it.
+  LatencyTimeline* tl = nullptr;
 };
 
 // Thread: wait for a new frame in the shared input, run inferPinnedMemory for one model, push the

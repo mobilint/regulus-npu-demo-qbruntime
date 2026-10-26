@@ -17,34 +17,34 @@ using mobilint::StatusCode;
 
 namespace app {
 class MaccelRepositionBuffer {
-public:
-    std::vector<mobilint::Buffer> buf;
+ public:
+  std::vector<mobilint::Buffer> buf;
 
-    mobilint::StatusCode reposition(float* pre_data);
+  mobilint::StatusCode reposition(float* pre_data);
 
-private:
-    Model* model;
+ private:
+  Model* model;
 
-    friend class MaccelMultiModel;
+  friend class MaccelMultiModel;
 };
 
 class MaccelMultiModel {
-    struct _Model {
-        std::unique_ptr<Model> model;
-        std::vector<mobilint::Buffer> reposition_buffer;
-    };
+  struct _Model {
+    std::unique_ptr<Model> model;
+    std::vector<mobilint::Buffer> reposition_buffer;
+  };
 
-public:
-    MaccelMultiModel(const std::vector<std::string>& model_paths);
-    ~MaccelMultiModel();
+ public:
+  MaccelMultiModel(const std::vector<std::string>& model_paths);
+  ~MaccelMultiModel();
 
-    std::unique_ptr<Accelerator> acc;
-    ModelConfig mc;
-    std::vector<_Model> _models;
+  std::unique_ptr<Accelerator> acc;
+  ModelConfig mc;
+  std::vector<_Model> _models;
 
-    std::vector<Model*> get_models();
-    MaccelRepositionBuffer get_reposition_buffer();
-    std::vector<MaccelRepositionBuffer> get_reposition_buffers();
+  std::vector<Model*> get_models();
+  MaccelRepositionBuffer get_reposition_buffer();
+  std::vector<MaccelRepositionBuffer> get_reposition_buffers();
 };
 }  // namespace app
 

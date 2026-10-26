@@ -17,22 +17,21 @@ namespace gst_wrapper {
 // The MAPI convert element name (v4l2video{N}convert) is detected at runtime since the video
 // node number varies per board/boot.
 class V4l2srcCapturePipeline : public BasePipeline {
-   public:
-    V4l2srcCapturePipeline() = delete;
-    V4l2srcCapturePipeline(const char* cam_dev_path, uint32_t cam_w, uint32_t cam_h,
-                           uint32_t cam_fps, uint32_t sink_w, uint32_t sink_h,
-                           const char* sink_format = "RGB");
+ public:
+  V4l2srcCapturePipeline() = delete;
+  V4l2srcCapturePipeline(const char* cam_dev_path, uint32_t cam_w, uint32_t cam_h, uint32_t cam_fps, uint32_t sink_w,
+                         uint32_t sink_h, const char* sink_format = "RGB");
 
-    GstElement* appsink;
+  GstElement* appsink;
 
-   private:
-    GstElement* v4l2src;
-    GstElement* jpegdec;
-    GstElement* mapiconvert;
+ private:
+  GstElement* v4l2src;
+  GstElement* jpegdec;
+  GstElement* mapiconvert;
 
-    void create_elements(const char* cam_dev_path);
-    void link_elements(uint32_t cam_w, uint32_t cam_h, uint32_t cam_fps, uint32_t sink_w,
-                       uint32_t sink_h, const char* sink_format);
+  void create_elements(const char* cam_dev_path);
+  void link_elements(uint32_t cam_w, uint32_t cam_h, uint32_t cam_fps, uint32_t sink_w, uint32_t sink_h,
+                     const char* sink_format);
 };
 
 // Find the MAPI HW convert element name (v4l2video{N}convert) by scanning /dev/video* for the

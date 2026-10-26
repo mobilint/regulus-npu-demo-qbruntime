@@ -11,11 +11,11 @@ namespace app {
 // dmabuf-backed (the pre stage does a zero-copy DMA350 copy from the dmabuf; there is no CPU
 // fallback). Add a new input type by writing one subclass -- no change to capture/pre.
 class CaptureSource {
-   public:
-    virtual ~CaptureSource() = default;
-    virtual void start() = 0;
-    virtual void stop() = 0;
-    virtual GstElement* appsink() = 0;
+ public:
+  virtual ~CaptureSource() = default;
+  virtual void start() = 0;
+  virtual void stop() = 0;
+  virtual GstElement* appsink() = 0;
 };
 
 }  // namespace app
