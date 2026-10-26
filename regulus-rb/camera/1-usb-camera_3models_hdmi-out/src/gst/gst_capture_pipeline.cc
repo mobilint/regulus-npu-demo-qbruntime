@@ -54,6 +54,7 @@ void V4l2srcCapturePipeline::create_elements(const char* cam_dev_path) {
   g_object_set(v4l2src, "device", cam_dev_path, "io-mode", 0 /*auto*/, NULL);
   g_object_set(jpegdec, "capture-io-mode", 4 /*dmabuf*/, NULL);
   g_object_set(mapiconvert, "output-io-mode", 5 /*dmabuf-import*/, NULL);
+  g_object_set(mapiconvert, "capture-io-mode", 4 /*dmabuf*/, NULL);
   // Buffer up to 8 RGB frames so v4l2src does not drop during downstream jitter.
   g_object_set(appsink, "max-buffers", 8, "drop", FALSE, "sync", FALSE, "emit-signals", FALSE, NULL);
 

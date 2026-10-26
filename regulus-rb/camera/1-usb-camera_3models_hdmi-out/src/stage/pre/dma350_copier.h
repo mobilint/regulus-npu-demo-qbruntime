@@ -7,9 +7,9 @@
 namespace app {
 
 // DMA350 V4L2 M2M copier. Copies the camera dmabuf -> a dma-heap(CMA) buffer in hardware, replacing
-// the CPU clone (camera->heap). The output CMA buffer is CPU-readable (cache-synced), so it serves
-// as the display frame directly. A ring of output buffers lets plot hold a frame while pre fills the
-// next. If setup fails, ok() is false and copy() returns nullptr (caller falls back to CPU).
+// the CPU clone (camera->heap). The output CMA buffer is CPU-mapped; bracket CPU reads with
+// CpuReadAccess. A ring of output buffers lets plot hold a frame while pre fills the next.
+// If setup fails, ok() is false and copy() returns an empty Frame. There is no CPU fallback.
 //
 // The copy takes only the crop window (V4L2_SEL_TGT_CROP on the source), so the destination comes
 // out packed at the model size. Measured on the LCD demo, where the window is 384x480 of a 640x480
@@ -19,6 +19,22 @@ namespace app {
 // rows, which is why the horizontal half of the crop used to be left to a strided cv::Mat.
 class Dma350Copier {
  public:
+  // Pair DMA-BUF START/END around CPU reads, including exception/early-return paths.
+  // finish() must succeed before the buffer is submitted to another device.
+  class CpuReadAccess {
+   public:
+    explicit CpuReadAccess(int dmabuf_fd) noexcept;
+    ~CpuReadAccess();
+    CpuReadAccess(const CpuReadAccess&) = delete;
+    CpuReadAccess& operator=(const CpuReadAccess&) = delete;
+    bool ok() const { return active_; }
+    bool finish() noexcept;
+
+   private:
+    int fd_;
+    bool active_ = false;
+  };
+
   // One copied frame: the same CMA buffer seen two ways. `data` is for the CPU, `dmabuf_fd` is
   // for other hardware (plot's DMA350 compose reads the frame straight out of this buffer, so it
   // needs the fd rather than an address). Both stay valid until the ring reuses the slot.
@@ -36,8 +52,8 @@ class Dma350Copier {
 
   bool ok() const { return ok_; }
 
-  // HW-copy the crop window out of camera_dmabuf_fd into the next ring output buffer and
-  // cache-sync it for CPU read. Returns a default (data == nullptr) Frame on failure.
+  // HW-copy the crop window into the next ring output buffer. CPU access is not started here.
+  // Returns a default (data == nullptr) Frame on failure.
   Frame copy(int camera_dmabuf_fd);
 
  private:

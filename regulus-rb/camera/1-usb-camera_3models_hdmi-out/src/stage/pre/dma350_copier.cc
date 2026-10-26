@@ -84,6 +84,38 @@ int cma_alloc(size_t bytes) {
 }
 }  // namespace
 
+Dma350Copier::CpuReadAccess::CpuReadAccess(int dmabuf_fd) noexcept : fd_(dmabuf_fd) {
+  dma_buf_sync sync{};
+  sync.flags = DMA_BUF_SYNC_START | DMA_BUF_SYNC_READ;
+  int result;
+  do {
+    result = ioctl(fd_, DMA_BUF_IOCTL_SYNC, &sync);
+  } while (result < 0 && (errno == EINTR || errno == EAGAIN));
+  if (result < 0) {
+    perror("[dma350] CPU read START");
+    return;
+  }
+  active_ = true;
+}
+
+Dma350Copier::CpuReadAccess::~CpuReadAccess() { finish(); }
+
+bool Dma350Copier::CpuReadAccess::finish() noexcept {
+  if (!active_) return true;
+  dma_buf_sync sync{};
+  sync.flags = DMA_BUF_SYNC_END | DMA_BUF_SYNC_READ;
+  int result;
+  do {
+    result = ioctl(fd_, DMA_BUF_IOCTL_SYNC, &sync);
+  } while (result < 0 && (errno == EINTR || errno == EAGAIN));
+  if (result < 0) {
+    perror("[dma350] CPU read END");
+    return false;
+  }
+  active_ = false;
+  return true;
+}
+
 Dma350Copier::Dma350Copier(int src_w, int src_h, int dst_w, int dst_h, int crop_x, int crop_y, int bpp, int ring)
     : ring_(ring > kMaxRing ? kMaxRing : ring),
       bpp_(bpp),
@@ -257,10 +289,6 @@ Dma350Copier::Frame Dma350Copier::copy(int camera_dmabuf_fd) {
     return {};
   }
 
-  // cache-invalidate so the CPU sees the DMA350's writes when it reads this CMA buffer.
-  dma_buf_sync s{};
-  s.flags = DMA_BUF_SYNC_START | DMA_BUF_SYNC_READ;
-  ioctl(out_fd_[dob.index], DMA_BUF_IOCTL_SYNC, &s);
   return {static_cast<const uint8_t*>(out_map_[dob.index]), out_fd_[dob.index]};
 }
 

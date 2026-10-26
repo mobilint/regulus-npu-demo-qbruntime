@@ -4,7 +4,9 @@
 
 #include <cstdint>
 #include <iostream>
+#include <memory>
 #include <opencv2/opencv.hpp>
+#include <stdexcept>
 
 #include "dma350_copier.h"
 #include "resize_crop.h"
@@ -39,7 +41,8 @@ std::thread pre_module(PreConfig cfg, Queue& capture_in, Queue& frame_out, Buffe
         Packet captured;
         if (capture_in.pop(captured) == Queue::CLOSED) break;
         if (cfg.tl) cfg.tl->pre_in.addValue(age_ms(captured.time_point));
-        GstSample* sample = static_cast<GstSample*>(captured.gst_sample);
+        std::unique_ptr<GstSample, decltype(&gst_sample_unref)> sample(static_cast<GstSample*>(captured.gst_sample),
+                                                                       &gst_sample_unref);
 
         if (cfg.bc) cfg.bc->start();
         const Dma350Copier::Frame copied = dma.copy(captured.dmabuf_fd);
@@ -48,7 +51,6 @@ std::thread pre_module(PreConfig cfg, Queue& capture_in, Queue& frame_out, Buffe
           std::cerr << "[pre] DMA350 copy failed (no fallback); dropping frame\n";
           if (cfg.drops) (*cfg.drops)++;
           if (cfg.bc) cfg.bc->end();
-          if (sample) gst_sample_unref(sample);
           cfg.run->stop(StopReason::Preprocess);
           break;
         }
@@ -60,19 +62,21 @@ std::thread pre_module(PreConfig cfg, Queue& capture_in, Queue& frame_out, Buffe
         // its unused byte right here -- the copy this stage already made is where
         // it costs least.
         const bool input_written = cfg.mm->write_input([&](uint8_t* input) {
+          Dma350Copier::CpuReadAccess cpu_read(copied.dmabuf_fd);
+          if (!cpu_read.ok()) throw std::runtime_error("DMA350 CPU read START failed");
           cv::Mat pinned(cfg.npu_h, cfg.npu_w, CV_8UC3, input);
           if (cfg.bpp == 4)
             cv::cvtColor(disp, pinned, cv::COLOR_RGBA2RGB);
           else
             disp.copyTo(pinned);
+          if (!cpu_read.finish()) throw std::runtime_error("DMA350 CPU read END failed");
         });
         if (!input_written) {
-          if (sample) gst_sample_unref(sample);
           break;
         }
         if (cfg.bc) cfg.bc->end();
 
-        if (sample) gst_sample_unref(sample);  // camera dmabuf consumed by the DMA350 copy
+        sample.reset();  // camera dmabuf consumed by the DMA350 copy
 
         Packet frame;
         frame.frame = disp;

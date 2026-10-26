@@ -28,7 +28,8 @@ QbMultiModel::QbMultiModel(const std::vector<std::string>& model_paths) {
     DataType input_type = DataType::Error;
     DataType output_type = DataType::Error;
     for (const auto& model_path : model_paths) {
-      std::unique_ptr<Model> model = Model::create(model_path, mc, status);
+      // Let the loaded runtime construct its default config internally.
+      std::unique_ptr<Model> model = Model::create(model_path, status);
       if (!status || model == nullptr) {
         // Missing or unreadable .mxq: say which one and stop, rather than
         // dereferencing null.

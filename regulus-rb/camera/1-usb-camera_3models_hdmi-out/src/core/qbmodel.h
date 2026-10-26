@@ -18,7 +18,6 @@ using mobilint::Accelerator;
 using mobilint::BufferInfo;
 using mobilint::DataType;
 using mobilint::Model;
-using mobilint::ModelConfig;
 using mobilint::PinnedMemory;
 using mobilint::StatusCode;
 
@@ -55,7 +54,6 @@ class QbMultiModel {
   ~QbMultiModel();
 
   std::unique_ptr<Accelerator> acc;
-  ModelConfig mc;
   std::vector<_Model> _models;
   std::unique_ptr<PinnedMemory<uint8_t>> input;  // shared NHWC uint8 input (all models)
   std::vector<void*> out_shmem;                  // SP500 shared buffers backing the output ring

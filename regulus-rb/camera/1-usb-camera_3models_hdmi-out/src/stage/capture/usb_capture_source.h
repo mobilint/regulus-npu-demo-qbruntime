@@ -21,6 +21,7 @@ class UsbCaptureSource : public CaptureSource {
   void start() override { pipe_.start(); }
   void stop() override { pipe_.stop(); }
   GstElement* appsink() override { return pipe_.appsink; }
+  GstBus* bus() override { return gst_element_get_bus(pipe_.pipeline); }
 
  private:
   gst_wrapper::V4l2srcCapturePipeline pipe_;
