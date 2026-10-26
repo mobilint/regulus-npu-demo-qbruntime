@@ -38,7 +38,7 @@ make -j"$(nproc)"
    ```
 2. `<camera-index>`를 확인한 장치 번호로 바꾸어 실행합니다.
    ```bash
-   sudo ./run.sh -d <camera-index>
+   ./run.sh -d <camera-index>
    ```
 
 `run.sh`는 demo 실행 전에 DSP firmware를 load합니다.

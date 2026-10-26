@@ -34,7 +34,7 @@ Run these commands from the deployed demo directory:
    ```
 2. Run the demo with that device number:
    ```bash
-   sudo ./run.sh -d <camera-index>
+   ./run.sh -d <camera-index>
    ```
 
 `run.sh` loads the DSP firmware before starting the demo.
