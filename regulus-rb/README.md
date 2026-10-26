@@ -3,8 +3,8 @@
 REGULUS-RB board demos are grouped by input type. They require the qbruntime and
 SP500 headers and libraries from the SDK. These SDK components are not bundled.
 
-- `camera/` — real-time camera → NPU → HDMI demos
-- `image/` — still-image inference demos
+- [`camera/`](camera/) — real-time camera → NPU → HDMI demos
+- [`image/`](image/) — still-image inference demos
 
 ## camera/
 
@@ -20,8 +20,8 @@ YOLO demos use DSP letterbox and postprocessing. Classification uses CPU resize,
 center crop, and top-5 because the SDK has no public classification DSP API.
 See each demo's README for build and execution steps.
 
-- [Image classification](image/image-classification/README.md)
-- [Object detection](image/object-detection/README.md)
-- [Face detection](image/face-detection/README.md)
-- [Instance segmentation](image/instance-segmentation/README.md)
-- [Pose estimation](image/pose-estimation/README.md)
+- [`image-classification`](image/image-classification/README.md)
+- [`object-detection`](image/object-detection/README.md)
+- [`face-detection`](image/face-detection/README.md)
+- [`instance-segmentation`](image/instance-segmentation/README.md)
+- [`pose-estimation`](image/pose-estimation/README.md)
