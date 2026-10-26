@@ -4,7 +4,8 @@
 결과 이미지는 `*_result.jpg`로 저장합니다.
 전체 흐름은 `inference.cc`에 있습니다.
 
-CPU가 256×256 resize, 224×224 center crop, BGR→RGB 변환을 수행합니다.
+CPU가 종횡비를 유지하면서 짧은 변을 256픽셀로 조정합니다.
+그다음 중앙 224×224 영역을 자르고 BGR→RGB 변환을 수행합니다.
 MXQ에 ImageNet normalization이 반영되어 있으므로 중복 적용하지 않습니다.
 NPU는 `inferPinnedMemory()`로 실행합니다. Softmax와 top-5 선택은 CPU가 수행합니다.
 SDK에 공개 classification/top-k DSP API가 없으므로 이 데모는 DSP를 사용하지 않습니다.

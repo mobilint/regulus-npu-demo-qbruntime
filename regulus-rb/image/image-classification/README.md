@@ -4,7 +4,8 @@ One image → ResNet-18 with `uint8` pinned input → top-5 classification.
 The result image is saved as `*_result.jpg`.
 The complete flow is in `inference.cc`.
 
-The CPU resizes to 256×256, center-crops to 224×224, and converts BGR to RGB.
+The CPU preserves the aspect ratio and resizes the short edge to 256 pixels.
+It then center-crops to 224×224 and converts BGR to RGB.
 The MXQ contains ImageNet normalization. The application does not normalize twice.
 `inferPinnedMemory()` runs the NPU. The CPU applies softmax and selects top-5.
 The SDK has no public classification/top-k DSP API, so this demo does not use DSP.

@@ -3,6 +3,7 @@
 #include <array>
 #include <cmath>
 #include <cstddef>
+#include <cstdint>
 #include <numeric>
 #include <stdexcept>
 #include <vector>
@@ -76,19 +77,32 @@ std::vector<std::string> read_labels(const std::filesystem::path& path) {
   return labels;
 }
 
+cv::Mat preprocess(const cv::Mat& image) {
+  // Match calibration: preserve aspect ratio, resize the short edge to 256, then center-crop.
+  // The DSP letterbox API is not equivalent to this classification transform.
+  cv::Mat resized, input;
+  const int short_edge = std::min(image.cols, image.rows);
+  const int width = static_cast<int>(int64_t(image.cols) * 256 / short_edge);
+  const int height = static_cast<int>(int64_t(image.rows) * 256 / short_edge);
+  cv::resize(image, resized, {width, height}, 0, 0, cv::INTER_LINEAR);
+  // Round half to even, as in torchvision CenterCrop.
+  const auto crop_offset = [](int size) {
+    const int difference = size - kSize;
+    return difference / 2 + (difference % 4 == 3 ? 1 : 0);
+  };
+  cv::cvtColor(resized(cv::Rect(crop_offset(width), crop_offset(height), kSize, kSize)), input, cv::COLOR_BGR2RGB);
+  if (!input.isContinuous()) input = input.clone();
+  return input;
+}
+
 void run(const std::string& model_path, const std::string& image_path) {
   if (!std::filesystem::is_regular_file(model_path)) throw std::runtime_error("Model not found: " + model_path);
   const auto labels = read_labels(std::filesystem::path(model_path).parent_path() / "imagenet.txt");
   cv::Mat image = cv::imread(image_path, cv::IMREAD_COLOR);
   if (image.empty()) throw std::runtime_error("Cannot read image: " + image_path);
 
-  // Matches this MXQ's calibration: 256x256 resize, then 224x224 center crop.
-  // The DSP letterbox API is not equivalent to this classification transform.
   const auto pre_start = Clock::now();
-  cv::Mat resized, input;
-  cv::resize(image, resized, {256, 256}, 0, 0, cv::INTER_LINEAR);
-  cv::cvtColor(resized(cv::Rect(16, 16, kSize, kSize)), input, cv::COLOR_BGR2RGB);
-  if (!input.isContinuous()) input = input.clone();
+  cv::Mat input = preprocess(image);
   // ImageNet mean/std and /255 are already fused into the MXQ. Keep raw bytes.
   const auto pre_end = Clock::now();
 
