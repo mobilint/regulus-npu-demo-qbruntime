@@ -170,8 +170,13 @@ std::thread decode_module(DecodeConfig cfg, Queue& in, Queue& out) {
             packet.dets.boxes.push_back({record.det.x1, record.det.y1, record.det.x2, record.det.y2});
             packet.dets.scores.push_back(record.det.score);
             packet.dets.labels.push_back(static_cast<int>(record.det.class_id));
-            const float* begin = &record.keypoints[0].x;
-            packet.dets.keypoints.emplace_back(begin, begin + kPoseChannels);
+            auto& keypoints = packet.dets.keypoints.emplace_back();
+            keypoints.reserve(kPoseChannels);
+            for (const auto& keypoint : record.keypoints) {
+              keypoints.push_back(keypoint.x);
+              keypoints.push_back(keypoint.y);
+              keypoints.push_back(keypoint.score);
+            }
           }
         } else {
           const auto* records = static_cast<const sp500_yolo_detection*>(output.records.data);
