@@ -8,10 +8,13 @@ SP500 headers and libraries from the SDK. These SDK components are not bundled.
 
 ## camera/
 
-The HDMI camera demo uses fixed YOLO11s face detection, pose estimation, and
-object detection models. It processes 480×320 input and renders 1920×1080 output.
+The 3-model HDMI camera demo uses fixed YOLO11s face detection, pose estimation,
+and object detection models. It processes 480×320 input and renders 1920×1080
+output. The segmentation HDMI camera demo uses a fixed YOLO11s segmentation
+model. It processes 640×480 input and renders 1280×720 output with full masks.
 
 - [`1-usb-camera_3models_hdmi-out`](camera/1-usb-camera_3models_hdmi-out/README.md)
+- [`1-usb-camera_segmodel_hdmi-out`](camera/1-usb-camera_segmodel_hdmi-out/README.md)
 
 ## image/
 
