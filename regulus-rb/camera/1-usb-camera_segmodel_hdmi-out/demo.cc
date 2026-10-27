@@ -107,7 +107,9 @@ Options parse_options(int argc, char** argv) {
         (arg == "--warmup" ? options.warmup : options.duration) = value;
       } else {
         if (value <= 0 || value >= 1) throw std::runtime_error("Threshold must be between 0 and 1");
-        (arg == "--conf" ? options.confidence : arg == "--iou" ? options.iou : options.mask) = float(value);
+        const float threshold = float(value);
+        if (threshold <= 0 || threshold >= 1) throw std::runtime_error("Threshold must be between 0 and 1");
+        (arg == "--conf" ? options.confidence : arg == "--iou" ? options.iou : options.mask) = threshold;
       }
     } else if (!arg.empty() && arg.front() != '-') {
       options.model = arg;
