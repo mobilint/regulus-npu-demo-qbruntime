@@ -20,6 +20,7 @@ This produces the `demo_usb_hdmi` binary.
 
 Copy the entire `1-usb-camera_segmodel_hdmi-out/` directory to the board.
 The demo uses the fixed `mxq/yolo11s-seg.mxq` model.
+The board must provide `dsp_firmware_load`, `flock`, and `fuser`.
 
 Open a root shell and run these commands from the deployed demo directory:
 
@@ -45,4 +46,3 @@ Options:
 - `--duration SEC`: measurement time after warmup; 0 runs until a signal; default 0
 - `model.mxq` or `-m model.mxq`: path to a compatible 640×480 raw-head segmentation model
 - `-h`, `--help`: show help
-

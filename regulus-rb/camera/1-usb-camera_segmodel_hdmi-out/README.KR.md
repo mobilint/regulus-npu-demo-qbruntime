@@ -23,6 +23,7 @@ make -j"$(nproc)"
 
 `1-usb-camera_segmodel_hdmi-out/` directory 전체를 board로 복사합니다.
 이 demo는 고정된 `mxq/yolo11s-seg.mxq` model을 사용합니다.
+Board에는 `dsp_firmware_load`, `flock`, `fuser` command가 필요합니다.
 
 Root shell을 엽니다.
 배포한 demo directory에서 다음 명령을 실행합니다.
@@ -50,4 +51,3 @@ Root shell을 엽니다.
 - `--duration SEC`: warmup 후 측정 시간, 기본값 0은 signal 수신까지 실행
 - `model.mxq` 또는 `-m model.mxq`: 호환되는 640×480 raw-head segmentation model 경로
 - `-h`, `--help`: help 출력
-

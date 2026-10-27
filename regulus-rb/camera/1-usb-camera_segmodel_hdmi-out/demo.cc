@@ -1007,7 +1007,10 @@ int run(const Options& options) {
 
 int main(int argc, char** argv) {
   try {
-    const auto options = demo::parse_options(argc, argv);
+    // Internal launcher protocol: help exits 0; valid arguments return 64 before hardware initialization.
+    const bool check_args = argc > 1 && std::string(argv[1]) == "--launcher-check";
+    const auto options = demo::parse_options(argc - check_args, argv + check_args);
+    if (check_args) return 64;
     std::signal(SIGINT, demo::on_signal);
     std::signal(SIGTERM, demo::on_signal);
     gst_init(nullptr, nullptr);
