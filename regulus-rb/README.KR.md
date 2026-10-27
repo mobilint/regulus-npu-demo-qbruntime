@@ -8,10 +8,14 @@ SP500 header 및 library가 필요합니다. 이 SDK 구성 요소는 포함되�
 
 ## camera/
 
-HDMI camera 데모는 고정된 YOLO11s 얼굴 검출, 자세 추정, 객체 검출 model을
-사용합니다. 480×320 input을 처리하고 1920×1080 output을 HDMI로 출력합니다.
+3-model HDMI camera 데모는 고정된 YOLO11s 얼굴 검출, 자세 추정, 객체
+검출 model을 사용합니다. 480×320 input을 처리하고 1920×1080 output을 HDMI로
+출력합니다. Segmentation HDMI camera 데모는 고정된 YOLO11s segmentation
+model을 사용합니다. 640×480 input을 처리하고 full mask가 있는 1280×720 output을
+HDMI로 출력합니다.
 
 - [`1-usb-camera_3models_hdmi-out`](camera/1-usb-camera_3models_hdmi-out/README.KR.md)
+- [`1-usb-camera_segmodel_hdmi-out`](camera/1-usb-camera_segmodel_hdmi-out/README.KR.md)
 
 ## image/
 
