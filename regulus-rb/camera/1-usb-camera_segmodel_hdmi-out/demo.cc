@@ -115,6 +115,7 @@ Options parse_options(int argc, char** argv) {
       throw std::runtime_error("Unknown option: " + arg);
     }
   }
+  if (!std::filesystem::is_regular_file(options.model)) throw std::runtime_error("Model not found: " + options.model);
   return options;
 }
 void check(mobilint::StatusCode status, const char* operation) {
@@ -578,7 +579,6 @@ struct Statistics {
 };
 
 int run(const Options& options) {
-  if (!std::filesystem::is_regular_file(options.model)) throw std::runtime_error("Model not found: " + options.model);
   check(sp500_dsp_open(0), "sp500_dsp_open");
   // The public library owns the DSP link. All shared buffers are released before process teardown.
   SharedMemory memory;
@@ -1007,7 +1007,7 @@ int run(const Options& options) {
 
 int main(int argc, char** argv) {
   try {
-    // Internal launcher protocol: help exits 0; valid arguments return 64 before hardware initialization.
+    // Internal launcher protocol: help exits 0; valid arguments and model return 64 before hardware initialization.
     const bool check_args = argc > 1 && std::string(argv[1]) == "--launcher-check";
     const auto options = demo::parse_options(argc - check_args, argv + check_args);
     if (check_args) return 64;

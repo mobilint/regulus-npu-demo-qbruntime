@@ -19,7 +19,7 @@ This produces the `demo_usb_hdmi` binary.
 ## Run (REGULUS)
 
 Copy the entire `1-usb-camera_segmodel_hdmi-out/` directory to the board.
-The demo uses the fixed `mxq/yolo11s-seg.mxq` model.
+If no model path is specified, the demo uses `mxq/yolo11s-seg.mxq` from the executable directory.
 The board must provide `dsp_firmware_load`, `flock`, and `fuser`.
 
 Open a root shell and run these commands from the deployed demo directory:
@@ -44,5 +44,14 @@ Options:
 - `--mask M`: mask threshold, `0 < M < 1`; default 0.5
 - `--warmup SEC`: time excluded after the first HDMI output; default 3 seconds
 - `--duration SEC`: measurement time after warmup; 0 runs until a signal; default 0
-- `model.mxq` or `-m model.mxq`: path to a compatible 640×480 raw-head segmentation model
+- `model.mxq` or `-m model.mxq`: path to a compatible 640×480 raw-head segmentation model; default `mxq/yolo11s-seg.mxq`
+
+  Replace `<model-path>` with an absolute path or a path relative to the directory that contains `run.sh`.
+  Both forms below select the specified model:
+
+  ```bash
+  ./run.sh -d <camera-index> -m "<model-path>"
+  ./run.sh "<model-path>" -d <camera-index>
+  ```
+
 - `-h`, `--help`: show help

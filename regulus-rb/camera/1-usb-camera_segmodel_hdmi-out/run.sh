@@ -3,7 +3,6 @@ set -eu
 
 DEMO_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd -P)
 BINARY="$DEMO_DIR/demo_usb_hdmi"
-MODEL="$DEMO_DIR/mxq/yolo11s-seg.mxq"
 
 if [ ! -x "$BINARY" ]; then
     echo "run.sh: executable is missing or is not executable: $BINARY" >&2
@@ -11,7 +10,7 @@ if [ ! -x "$BINARY" ]; then
 fi
 
 unset LD_PRELOAD || true
-# Let the application's parser distinguish help, valid arguments, and errors.
+# Let the application's parser validate arguments and the selected model before firmware loading.
 argument_status=0
 (cd "$DEMO_DIR" && exec "$BINARY" --launcher-check "$@") || argument_status=$?
 case "$argument_status" in
@@ -19,24 +18,8 @@ case "$argument_status" in
     *) exit "$argument_status" ;;
 esac
 
-if [ "$#" -gt 0 ]; then
-    case "$1" in
-        -*) ;;
-        *) MODEL=$1; shift ;;
-    esac
-fi
-
-case "$MODEL" in
-    /*) ;;
-    *) MODEL="$DEMO_DIR/$MODEL" ;;
-esac
-
 if [ "$(id -u)" -ne 0 ]; then
     echo "run.sh: root access is required" >&2
-    exit 1
-fi
-if [ ! -f "$MODEL" ]; then
-    echo "run.sh: model is missing: $MODEL" >&2
     exit 1
 fi
 for tool in dsp_firmware_load flock fuser; do
@@ -136,10 +119,10 @@ cd "$DEMO_DIR"
 starting_child=1
 if [ "${RT:-1}" != 0 ] && command -v chrt >/dev/null 2>&1; then
     echo "[run.sh] start demo with FIFO priority 50"
-    chrt -f 50 "$BINARY" "$MODEL" "$@" &
+    chrt -f 50 "$BINARY" "$@" &
 else
     echo "[run.sh] start demo with normal scheduling"
-    "$BINARY" "$MODEL" "$@" &
+    "$BINARY" "$@" &
 fi
 demo_pid=$!
 starting_child=0

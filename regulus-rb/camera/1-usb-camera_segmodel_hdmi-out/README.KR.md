@@ -22,7 +22,7 @@ make -j"$(nproc)"
 ## 실행 (REGULUS)
 
 `1-usb-camera_segmodel_hdmi-out/` directory 전체를 board로 복사합니다.
-이 demo는 고정된 `mxq/yolo11s-seg.mxq` model을 사용합니다.
+model 경로를 생략하면 실행파일 directory 기준 `mxq/yolo11s-seg.mxq`를 사용합니다.
 Board에는 `dsp_firmware_load`, `flock`, `fuser` command가 필요합니다.
 
 Root shell을 엽니다.
@@ -49,5 +49,14 @@ Root shell을 엽니다.
 - `--mask M`: mask threshold, `0 < M < 1`, 기본값 0.5
 - `--warmup SEC`: 첫 HDMI output 후 제외 시간, 기본값 3초
 - `--duration SEC`: warmup 후 측정 시간, 기본값 0은 signal 수신까지 실행
-- `model.mxq` 또는 `-m model.mxq`: 호환되는 640×480 raw-head segmentation model 경로
+- `model.mxq` 또는 `-m model.mxq`: 호환되는 640×480 raw-head segmentation model 경로, 기본값 `mxq/yolo11s-seg.mxq`
+
+  `<model-path>`에 absolute path 또는 `run.sh` directory 기준 relative path를 지정합니다.
+  아래 두 방식 모두 지정한 model을 사용합니다.
+
+  ```bash
+  ./run.sh -d <camera-index> -m "<model-path>"
+  ./run.sh "<model-path>" -d <camera-index>
+  ```
+
 - `-h`, `--help`: help 출력
